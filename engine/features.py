@@ -158,7 +158,7 @@ def hotword():
 def findContact(query):
     
     
-    words_to_remove = [ASSISTANT_NAME, 'make', 'a', 'to', 'phone', 'call', 'send', 'message', 'wahtsapp', 'video']
+    words_to_remove = [ASSISTANT_NAME, 'make', 'a', 'to', 'phone', 'call', 'send', 'message', 'whatsapp', 'wahtsapp', 'video', 'voice']
     query = remove_words(query, words_to_remove)
 
     try:
@@ -167,8 +167,20 @@ def findContact(query):
         results = cursor.fetchall()
         print(results[0][0])
         mobile_number_str = str(results[0][0])
-        if not mobile_number_str.startswith('+91'):
-            mobile_number_str = '+91' + mobile_number_str
+        
+        # Clean the number: Handle multiple numbers split by ":::" or ","
+        mobile_number_str = mobile_number_str.split(':::')[0].strip()
+        mobile_number_str = mobile_number_str.split(',')[0].strip()
+        
+        # Extract only digits
+        import re
+        mobile_number_str = re.sub(r'[^0-9]', '', mobile_number_str)
+        
+        # Prepend country code '91' if length is 10
+        if len(mobile_number_str) == 10:
+            mobile_number_str = '91' + mobile_number_str
+        elif mobile_number_str.startswith('0') and len(mobile_number_str) == 11:
+            mobile_number_str = '91' + mobile_number_str[1:]
 
         return mobile_number_str, query
     except:
@@ -196,16 +208,24 @@ def whatsApp(mobile_no, message, flag, name):
         # Trigger Voice Call via AppleScript
         applescript = '''
         tell application "System Events"
-            tell process "WhatsApp"
-                if exists (menu item "Voice Call" of menu "Chat" of menu bar 1) then
-                    click menu item "Voice Call" of menu "Chat" of menu bar 1
-                else if exists (menu item "Audio Call" of menu "Chat" of menu bar 1) then
-                    click menu item "Audio Call" of menu "Chat" of menu bar 1
-                else
-                    -- Fallback: Shift + Cmd + D is a common voice call shortcut
-                    keystroke "d" using {command down, shift down}
-                end if
-            end tell
+            if exists process "WhatsApp" then
+                tell process "WhatsApp"
+                    set frontmost to true
+                    delay 1
+                    try
+                        set chatMenu to first menu bar item of menu bar 1 whose name contains "Chat"
+                        set callItem to first menu item of menu 1 of chatMenu whose name contains "Voice Call"
+                        click callItem
+                    on error
+                        try
+                            set callItem to first menu item of menu 1 of chatMenu whose name contains "Audio Call"
+                            click callItem
+                        on error
+                            keystroke "d" using {command down, shift down}
+                        end try
+                    end try
+                end tell
+            end if
         end tell
         '''
         subprocess.run(["osascript", "-e", applescript])
@@ -218,13 +238,19 @@ def whatsApp(mobile_no, message, flag, name):
         # Trigger Video Call via AppleScript
         applescript = '''
         tell application "System Events"
-            tell process "WhatsApp"
-                if exists (menu item "Video Call" of menu "Chat" of menu bar 1) then
-                    click menu item "Video Call" of menu "Chat" of menu bar 1
-                else
-                    keystroke "v" using {command down, shift down}
-                end if
-            end tell
+            if exists process "WhatsApp" then
+                tell process "WhatsApp"
+                    set frontmost to true
+                    delay 1
+                    try
+                        set chatMenu to first menu bar item of menu bar 1 whose name contains "Chat"
+                        set callItem to first menu item of menu 1 of chatMenu whose name contains "Video Call"
+                        click callItem
+                    on error
+                        keystroke "v" using {command down, shift down}
+                    end try
+                end tell
+            end if
         end tell
         '''
         subprocess.run(["osascript", "-e", applescript])
