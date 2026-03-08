@@ -1,5 +1,7 @@
 import platform
+from shlex import quote
 import struct
+import subprocess
 import pyaudio
 import pyautogui
 import pygame
@@ -17,6 +19,8 @@ import pvporcupine
 import sqlite3
 
 import os
+
+from engine.helper import remove_words
 
 # replace with the actual path to your database file
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -148,3 +152,81 @@ def hotword():
             audio_stream.close()
         if paud is not None:
             paud.terminate()
+
+
+#find contacts
+def findContact(query):
+    
+    
+    words_to_remove = [ASSISTANT_NAME, 'make', 'a', 'to', 'phone', 'call', 'send', 'message', 'wahtsapp', 'video']
+    query = remove_words(query, words_to_remove)
+
+    try:
+        query = query.strip().lower()
+        cursor.execute("SELECT mobile_no FROM contacts WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ?", ('%' + query + '%', query + '%'))
+        results = cursor.fetchall()
+        print(results[0][0])
+        mobile_number_str = str(results[0][0])
+        if not mobile_number_str.startswith('+91'):
+            mobile_number_str = '+91' + mobile_number_str
+
+        return mobile_number_str, query
+    except:
+        speak('not exist in contacts')
+        return 0, 0
+#### 9. Create Whatsapp Function in features.py
+from urllib.parse import quote as url_quote
+
+def whatsApp(mobile_no, message, flag, name):
+
+    if flag == 'message':
+        jarvis_message = "message send successfully to " + name
+        encoded_message = url_quote(message)
+        whatsapp_url = f"whatsapp://send?phone={mobile_no}&text={encoded_message}"
+        subprocess.run(["open", whatsapp_url])
+        time.sleep(5)
+        # On macOS WhatsApp, opening the URL directly puts focus on the text box.
+        pyautogui.press('enter')
+
+    elif flag == 'call':
+        jarvis_message = "calling to " + name
+        whatsapp_url = f"whatsapp://send?phone={mobile_no}"
+        subprocess.run(["open", whatsapp_url])
+        time.sleep(5)
+        # Trigger Voice Call via AppleScript
+        applescript = '''
+        tell application "System Events"
+            tell process "WhatsApp"
+                if exists (menu item "Voice Call" of menu "Chat" of menu bar 1) then
+                    click menu item "Voice Call" of menu "Chat" of menu bar 1
+                else if exists (menu item "Audio Call" of menu "Chat" of menu bar 1) then
+                    click menu item "Audio Call" of menu "Chat" of menu bar 1
+                else
+                    -- Fallback: Shift + Cmd + D is a common voice call shortcut
+                    keystroke "d" using {command down, shift down}
+                end if
+            end tell
+        end tell
+        '''
+        subprocess.run(["osascript", "-e", applescript])
+
+    else:
+        jarvis_message = "starting video call with " + name
+        whatsapp_url = f"whatsapp://send?phone={mobile_no}"
+        subprocess.run(["open", whatsapp_url])
+        time.sleep(5)
+        # Trigger Video Call via AppleScript
+        applescript = '''
+        tell application "System Events"
+            tell process "WhatsApp"
+                if exists (menu item "Video Call" of menu "Chat" of menu bar 1) then
+                    click menu item "Video Call" of menu "Chat" of menu bar 1
+                else
+                    keystroke "v" using {command down, shift down}
+                end if
+            end tell
+        end tell
+        '''
+        subprocess.run(["osascript", "-e", applescript])
+
+    speak(jarvis_message)

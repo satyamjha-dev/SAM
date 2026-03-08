@@ -7,52 +7,14 @@ def extract_yt_term(command):
     # If a match is found, return the extracted song name; otherwise, return None
     return match.group(1) if match else None
 
-# def takecommand():
+def remove_words(input_string, words_to_remove):
+    # Split the input string into words
+    words = input_string.split()
 
-#     r = sr.Recognizer()
+    # Remove unwanted words
+    filtered_words = [word for word in words if word.lower() not in words_to_remove]
 
-#     with sr.Microphone() as source:
-#         print('listening....')
-#         eel.DisplayMessage('listening....')
-#         r.pause_threshold = 1
-#         r.adjust_for_ambient_noise(source)
-        
-#         audio = r.listen(source, 10, 6)
+    # Join the remaining words back into a string
+    result_string = ' '.join(filtered_words)
 
-#     try:
-#         print('recognizing')
-#         eel.DisplayMessage('recognizing....')
-#         query = r.recognize_google(audio, language='en-in')
-#         print(f"user said: {query}")
-        
-        
-#         eel.DisplayMessage(query)
-#         time.sleep(2)
-        
-       
-#     except Exception as e:
-#         return ""
-    
-#     return query.lower()
-
-# @eel.expose
-# def allcommand():
-
-
-#     try:
-#         query = takecommand()
-#         print(query)
-#         if "open" in query:
-#             from engine.features import openCommand
-#             openCommand(query)
-#         elif "on youtube":
-#             from engine.features import PlayYoutube
-#             PlayYoutube(query)
-#         else:
-#                 print("not run")
-#     except:
-#         print("error")
-
-#     eel.ShowHood()
-
-
+    return result_string
