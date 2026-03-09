@@ -27,9 +27,52 @@ function doc_keyUp(e) {
 }
 
 window.addEventListener('keydown', doc_keyUp)
+ function PlayAssistant(message) {
 
+        if (message != "") {
 
+            $("#oval").attr("hidden", true);
+            $("#siriwave").attr("hidden", false);
+            eel.allcommand(message);
+            $("#chatbox").val("")
+            $("#MicBtn").attr('hidden', false);
+            $("#SendBtn").attr('hidden', true);
 
+        }
 
+    }
+function ShowHideButton(message) {
+  if (message.length == 0) {
+    $("#MicBtn").attr('hidden', false);
+    $("#SendBtn").attr('hidden', true);
+  }
+  else {
+    $("#MicBtn").attr('hidden', true);
+    $("#SendBtn").attr('hidden', false);
+  }
+}
+   $("#chatbox").keyup(function () {
 
-});
+        let message = $("#chatbox").val();
+        ShowHideButton(message)
+
+    });
+
+    // send button event handler
+    $("#SendBtn").click(function () {
+
+        let message = $("#chatbox").val()
+        PlayAssistant(message)
+
+    });
+
+    // enter key handler
+    $("#chatbox").keypress(function (e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            let message = $("#chatbox").val();
+            PlayAssistant(message);
+        }
+    });
+  
+  });

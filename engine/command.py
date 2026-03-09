@@ -55,9 +55,15 @@ def takecommand():
 
 
 @eel.expose
-def allcommand():
-    try:
+def allcommand(message=1):
+    if message == 1:
         query = takecommand()
+        print(query)
+        # eel.senderText(query)
+    else:
+        query = message
+        # eel.senderText(query)
+    try:
         print("Final query:", query)
 
         if not query:
