@@ -26,32 +26,47 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background-image: radial-gradient(#6b72ff00 50%, #000dff3b 40%);
-  box-shadow: 0 0 50px rgb(25, 0, 255), inset 0 0 50px rgb(25, 0, 255);
+  box-shadow: 0 0 40px rgba(0, 200, 255, 0.6), inset 0 0 40px rgba(0, 200, 255, 0.6);
   border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
-  animation: animate1 1s linear infinite;
+  animation: animate1 6s linear infinite;
+  mix-blend-mode: screen;
 }
 .square span:nth-child(2) {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background-image: radial-gradient(#6b72ff00 50%, #000dff3b 40%);
-  box-shadow: 0 0 50px rgb(25, 0, 255), inset 0 0 50px rgb(25, 0, 255);
-  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
-  animation: animate2 3s linear infinite;
+  background-image: radial-gradient(#6b72ff00 50%, #7a00ff3b 40%);
+  box-shadow: 0 0 50px rgba(120, 60, 255, 0.7), inset 0 0 50px rgba(120, 60, 255, 0.7);
+  border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+  animation: animate2 8s linear infinite reverse;
+  mix-blend-mode: screen;
 }
 .square span:nth-child(3) {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background-image: radial-gradient(#6b72ff00 50%, #000dff3b 40%);
-  box-shadow: 0 0 50px rgb(25, 0, 255), inset 0 0 50px rgb(25, 0, 255);
-  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
-  animation: animate3 6s linear infinite;
+  background-image: radial-gradient(#6b72ff00 50%, #00ffd53b 40%);
+  box-shadow: 0 0 60px rgba(0, 255, 213, 0.6), inset 0 0 60px rgba(0, 255, 213, 0.6);
+  border-radius: 63% 37% 38% 62% / 56% 59% 41% 44%;
+  animation: animate3 10s linear infinite;
+  mix-blend-mode: screen;
 }
 
-@keyframes animate1 { 0%{transform:rotate(0deg)}  100%{transform:rotate(360deg)} }
-@keyframes animate2 { 0%{transform:rotate(0deg)}  100%{transform:rotate(360deg)} }
-@keyframes animate3 { 0%{transform:rotate(0deg)}  100%{transform:rotate(360deg)} }
+@keyframes animate1 { 
+  0%   { transform: rotate(0deg) scale(1); }  
+  50%  { transform: rotate(180deg) scale(1.05); } 
+  100% { transform: rotate(360deg) scale(1); } 
+}
+@keyframes animate2 { 
+  0%   { transform: rotate(0deg) scale(1.05); }  
+  50%  { transform: rotate(180deg) scale(1); } 
+  100% { transform: rotate(360deg) scale(1.05); } 
+}
+@keyframes animate3 { 
+  0%   { transform: rotate(0deg) scale(0.95); }  
+  50%  { transform: rotate(180deg) scale(1.08); } 
+  100% { transform: rotate(360deg) scale(0.95); } 
+}
 
 /* ─── Input bar ─── */
 #TextInput {

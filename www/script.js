@@ -62,6 +62,7 @@ function canvasApp() {
 	var i;
 	var theta, phi;
 	var x0, y0, z0;
+	var timerCount = 0;
 
 	init();
 
@@ -117,6 +118,7 @@ function canvasApp() {
 	}
 
 	function onTimer() {
+		timerCount++;
 		//if enough time has elapsed, we will add new particles.		
 		count++;
 		if (count >= wait) {
@@ -125,9 +127,13 @@ function canvasApp() {
 			for (i = 0; i < numToAddEachFrame; i++) {
 				theta = Math.random() * 2 * Math.PI;
 				phi = Math.acos(Math.random() * 2 - 1);
-				x0 = sphereRad * Math.sin(phi) * Math.cos(theta);
-				y0 = sphereRad * Math.sin(phi) * Math.sin(theta);
-				z0 = sphereRad * Math.cos(phi);
+				
+				// Breathing effect on the sphere radius
+				var dynamicRadius = sphereRad + Math.sin(timerCount * 0.03) * 20;
+				
+				x0 = dynamicRadius * Math.sin(phi) * Math.cos(theta);
+				y0 = dynamicRadius * Math.sin(phi) * Math.sin(theta);
+				z0 = dynamicRadius * Math.cos(phi);
 
 				//We use the addParticle function to add a new particle. The parameters set the position and velocity components.
 				//Note that the velocity parameters will cause the particle to initially fly outwards away from the sphere center (after
@@ -156,9 +162,11 @@ function canvasApp() {
 		sinAngle = Math.sin(turnAngle);
 		cosAngle = Math.cos(turnAngle);
 
-		//background fill
-		context.fillStyle = "#000000";
+		//background fill with light trail effect
+		context.globalCompositeOperation = "source-over";
+		context.fillStyle = "rgba(0, 0, 0, 0.25)";
 		context.fillRect(0, 0, displayWidth, displayHeight);
+		context.globalCompositeOperation = "lighter";
 
 		//update and draw particles
 		p = particleList.first;
@@ -224,11 +232,18 @@ function canvasApp() {
 				//depth-dependent darkening
 				depthAlphaFactor = (1 - rotZ / zeroAlphaDepth);
 				depthAlphaFactor = (depthAlphaFactor > 1) ? 1 : ((depthAlphaFactor < 0) ? 0 : depthAlphaFactor);
-				context.fillStyle = rgbString + depthAlphaFactor * p.alpha + ")";
+				
+				// Premium AI colors: transition between cyan and deep purple
+				var hue = 230 + Math.sin(p.x * 0.015 + p.y * 0.015 + timerCount * 0.02) * 70;
+				var currentAlpha = depthAlphaFactor * p.alpha;
+				context.fillStyle = "hsla(" + hue + ", 100%, 65%, " + currentAlpha + ")";
 
 				//draw
 				context.beginPath();
-				context.arc(p.projX, p.projY, m * particleRad, 0, 2 * Math.PI, false);
+				// Dynamic particle radius for a twinkling effect
+				var pRad = m * particleRad * (1 + Math.sin(timerCount * 0.1 + p.x * 0.05) * 0.4);
+                pRad = Math.max(0.1, pRad); // Prevent negative radius
+				context.arc(p.projX, p.projY, pRad, 0, 2 * Math.PI, false);
 				context.closePath();
 				context.fill();
 			}

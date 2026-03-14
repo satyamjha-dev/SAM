@@ -212,18 +212,7 @@ def whatsApp(mobile_no, message, flag, name):
                 tell process "WhatsApp"
                     set frontmost to true
                     delay 1
-                    try
-                        set chatMenu to first menu bar item of menu bar 1 whose name contains "Chat"
-                        set callItem to first menu item of menu 1 of chatMenu whose name contains "Voice Call"
-                        click callItem
-                    on error
-                        try
-                            set callItem to first menu item of menu 1 of chatMenu whose name contains "Audio Call"
-                            click callItem
-                        on error
-                            keystroke "d" using {command down, shift down}
-                        end try
-                    end try
+                    keystroke "d" using {command down, shift down}
                 end tell
             end if
         end tell
@@ -242,13 +231,7 @@ def whatsApp(mobile_no, message, flag, name):
                 tell process "WhatsApp"
                     set frontmost to true
                     delay 1
-                    try
-                        set chatMenu to first menu bar item of menu bar 1 whose name contains "Chat"
-                        set callItem to first menu item of menu 1 of chatMenu whose name contains "Video Call"
-                        click callItem
-                    on error
-                        keystroke "v" using {command down, shift down}
-                    end try
+                    keystroke "v" using {command down, shift down}
                 end tell
             end if
         end tell
