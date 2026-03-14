@@ -131,4 +131,8 @@ $(document).ready(function () {
     const dateLbl = document.getElementById("chat-date-label");
     if (dateLbl) dateLbl.textContent = today;
 
+
+
+    
+
 });
