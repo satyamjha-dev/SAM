@@ -11,6 +11,15 @@ $(document).ready(function () {
         box.scrollTop = box.scrollHeight;
     }
 
+    function escapeHtml(text) {
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     /* ── Typing indicator (shown while SAM thinks) ── */
     function showTyping() {
         removeTyping();
@@ -57,7 +66,7 @@ $(document).ready(function () {
         <div class="msg-row sender">
             <div class="msg-avatar user-avatar">U</div>
             <div class="msg-bubble-wrap">
-                <div class="sender_message msg-bubble">${message}</div>
+                <div class="sender_message msg-bubble">${escapeHtml(message)}</div>
                 <div class="msg-time">${nowTime()}</div>
             </div>
         </div>`;
@@ -66,16 +75,31 @@ $(document).ready(function () {
     }
 
     /* ── Receiver bubble (SAM reply) ── */
+    let lastReceiverMessage = "";
+    let lastReceiverTime = 0;
     eel.expose(receiverText);
     function receiverText(message) {
         if (!message || message.trim() === "") return;
+
+        const cleanMessage = message.trim();
+        const now = Date.now();
+
+        if (cleanMessage === lastReceiverMessage && now - lastReceiverTime < 2000) {
+            console.log("Duplicate receiver message skipped:", cleanMessage);
+            removeTyping();
+            return;
+        }
+
+        lastReceiverMessage = cleanMessage;
+        lastReceiverTime = now;
+
         removeTyping();
         const chatBox = document.getElementById("chat-canvas-body");
         chatBox.innerHTML += `
         <div class="msg-row receiver">
             <div class="msg-avatar sam-avatar">S</div>
             <div class="msg-bubble-wrap">
-                <div class="receiver_message msg-bubble">${message}</div>
+                <div class="receiver_message msg-bubble">${escapeHtml(cleanMessage)}</div>
                 <div class="msg-time">${nowTime()}</div>
             </div>
         </div>`;
