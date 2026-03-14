@@ -1,93 +1,110 @@
 $(document).ready(function () {
 
+    /* ── helpers ── */
+    function nowTime() {
+        const d = new Date();
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
 
+    function scrollToBottom() {
+        const box = document.getElementById("chat-canvas-body");
+        box.scrollTop = box.scrollHeight;
+    }
 
-    // Display Speak Message
-    eel.expose(DisplayMessage)
+    /* ── Typing indicator (shown while SAM thinks) ── */
+    function showTyping() {
+        removeTyping();
+        const chatBox = document.getElementById("chat-canvas-body");
+        chatBox.innerHTML += `
+        <div class="msg-row receiver" id="typingRow">
+            <div class="msg-avatar sam-avatar">S</div>
+            <div class="msg-bubble-wrap">
+                <div class="receiver_message msg-bubble">
+                    <div class="typing-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        scrollToBottom();
+    }
+
+    function removeTyping() {
+        const row = document.getElementById("typingRow");
+        if (row) row.remove();
+    }
+
+    /* ── Display SAM's spoken text (siri wave section) ── */
+    eel.expose(DisplayMessage);
     function DisplayMessage(message) {
         $(".siri-message").text(message);
     }
 
-    // Display hood
-    eel.expose(ShowHood)
+    /* ── Show main oval (idle state) ── */
+    eel.expose(ShowHood);
     function ShowHood() {
-        
-         $('#oval').attr("hidden", false);
-         $('#siriwave').attr("hidden", true);
+        $('#oval').attr("hidden", false);
+        $('#siriwave').attr("hidden", true);
     }
 
-    // eel.expose(senderText)
-    // function senderText(message) {
-    //     var chatBox = document.getElementById("chat-canvas-body");
-    //     if (message.trim() !== "") {
-    //         chatBox.innerHTML += `<div class="row justify-content-end mb-4">
-    //         <div class = "width-size">
-    //         <div class="sender_message">${message}</div>
-    //     </div>`; 
+    /* ── Sender bubble (User typed / said) ── */
+    eel.expose(senderText);
+    function senderText(message) {
+        if (!message || message.trim() === "") return;
+        removeTyping();
+        const chatBox = document.getElementById("chat-canvas-body");
+        chatBox.innerHTML += `
+        <div class="msg-row sender">
+            <div class="msg-avatar user-avatar">U</div>
+            <div class="msg-bubble-wrap">
+                <div class="sender_message msg-bubble">${message}</div>
+                <div class="msg-time">${nowTime()}</div>
+            </div>
+        </div>`;
+        scrollToBottom();
+        showTyping(); // show SAM thinking after user sends
+    }
 
-    //         // Scroll to the bottom of the chat box
-    //         chatBox.scrollTop = chatBox.scrollHeight;
-    //     }
-    // }
+    /* ── Receiver bubble (SAM reply) ── */
+    eel.expose(receiverText);
+    function receiverText(message) {
+        if (!message || message.trim() === "") return;
+        removeTyping();
+        const chatBox = document.getElementById("chat-canvas-body");
+        chatBox.innerHTML += `
+        <div class="msg-row receiver">
+            <div class="msg-avatar sam-avatar">S</div>
+            <div class="msg-bubble-wrap">
+                <div class="receiver_message msg-bubble">${message}</div>
+                <div class="msg-time">${nowTime()}</div>
+            </div>
+        </div>`;
+        scrollToBottom();
+    }
 
-    // eel.expose(receiverText)
-    // function receiverText(message) {
+    /* ── In-canvas input bar ── */
+    $("#canvasInput").on("keypress", function (e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            const msg = $(this).val().trim();
+            if (msg) {
+                $(this).val("");
+                window.PlayAssistant && window.PlayAssistant(msg);
+            }
+        }
+    });
 
-    //     var chatBox = document.getElementById("chat-canvas-body");
-    //     if (message.trim() !== "") {
-    //         chatBox.innerHTML += `<div class="row justify-content-start mb-4">
-    //         <div class = "width-size">
-    //         <div class="receiver_message">${message}</div>
-    //         </div>
-    //     </div>`; 
+    $("#canvasSendBtn").on("click", function () {
+        const msg = $("#canvasInput").val().trim();
+        if (msg) {
+            $("#canvasInput").val("");
+            window.PlayAssistant && window.PlayAssistant(msg);
+        }
+    });
 
-    //         // Scroll to the bottom of the chat box
-    //         chatBox.scrollTop = chatBox.scrollHeight;
-    //     }
-
-    // }
-
-
-    // // Hide Loader and display Face Auth animation
-    // eel.expose(hideLoader)
-    // function hideLoader() {
-
-    //     $("#Loader").attr("hidden", true);
-    //     $("#FaceAuth").attr("hidden", false);
-
-    // }
-    // // Hide Face auth and display Face Auth success animation
-    // eel.expose(hideFaceAuth)
-    // function hideFaceAuth() {
-
-    //     $("#FaceAuth").attr("hidden", true);
-    //     $("#FaceAuthSuccess").attr("hidden", false);
-
-    // }
-    // // Hide success and display 
-    // eel.expose(hideFaceAuthSuccess)
-    // function hideFaceAuthSuccess() {
-
-    //     $("#FaceAuthSuccess").attr("hidden", true);
-    //     $("#HelloGreet").attr("hidden", false);
-
-    // }
-
-
-    // // Hide Start Page and display blob
-    // eel.expose(hideStart)
-    // function hideStart() {
-
-    //     $("#Start").attr("hidden", true);
-
-    //     setTimeout(function () {
-    //         $("#Oval").addClass("animate__animated animate__zoomIn");
-
-    //     }, 1000)
-    //     setTimeout(function () {
-    //         $("#Oval").attr("hidden", false);
-    //     }, 1000)
-    // }
-
+    /* ── Set today's date in divider ── */
+    const today = new Date().toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+    const dateLbl = document.getElementById("chat-date-label");
+    if (dateLbl) dateLbl.textContent = today;
 
 });

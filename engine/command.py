@@ -24,6 +24,7 @@ def speak(text):
 
     # macOS native TTS
     os.system(f'say -v {VOICE} -r {RATE} "{text}"')
+    eel.receiverText(text)
 
 
 def takecommand():
@@ -59,10 +60,10 @@ def allcommand(message=1):
     if message == 1:
         query = takecommand()
         print(query)
-        # eel.senderText(query)
+        eel.senderText(query)
     else:
         query = message
-        # eel.senderText(query)
+        eel.senderText(query)
     try:
         print("Final query:", query)
 

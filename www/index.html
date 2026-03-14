@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI ASSISTANT</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <!-- Particle js -->
@@ -23,7 +23,7 @@
 
         <!--!this section is for starting phase where chat box is given -->
 
-        <section id="oval" class="mb-4" >
+        <section id="oval" class="mb-4">
 
             <div class="row">
                 <div class="col-md-1">
@@ -47,7 +47,7 @@
 
 
                     </div>
-                    <h5 class="text-light text-center">ASK ME ANYTHING !</h5>
+                    <p id="askLabel" class="text-center mt-2">Ask me anything</p>
                     <div class="col-md-12 mt-4 pt-4">
                         <div class="text-center">
                             <div id="TextInput" class="d-flex">
@@ -114,6 +114,40 @@
 
         </section>
     </div>
+    <div class="offcanvas offcanvas-start chat-canvas" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+        id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+
+        <!-- ── Premium Chat Header ── -->
+        <div class="offcanvas-header d-flex align-items-center gap-3">
+            <div class="chat-header-avatar">S</div>
+            <div class="chat-header-info flex-grow-1">
+                <div class="chat-header-name">S.A.M</div>
+                <div class="chat-header-status">
+                    <span class="status-dot"></span> Online
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <!-- ── Messages Body ── -->
+        <div id="chat-canvas-body" class="offcanvas-body">
+            <!-- date divider -->
+            <div class="chat-date-divider" id="chat-date-label">Today</div>
+            <!-- messages injected here by controller.js -->
+        </div>
+
+        <!-- ── In-Canvas Input Bar ── -->
+        <div class="chat-input-area">
+            <div class="chat-input-wrap">
+                <input type="text" class="chat-canvas-input" id="canvasInput" placeholder="Message S.A.M…" autocomplete="off">
+                <button class="chat-send-btn" id="canvasSendBtn" title="Send">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.328.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!--! these are the process where all link is connected -->
 
@@ -132,7 +166,7 @@
     <!-- siri wave -->
     <script src="https://unpkg.com/siriwave/dist/siriwave.umd.min.js"></script>
 
-     
+
     <script src="index.js"></script>
     <script src="controller.js"></script>
     <script type="text/javascript" src="/eel.js"></script>

@@ -41,6 +41,7 @@ window.addEventListener('keydown', doc_keyUp)
         }
 
     }
+    window.PlayAssistant = PlayAssistant; // expose for in-canvas input bar
 function ShowHideButton(message) {
   if (message.length == 0) {
     $("#MicBtn").attr('hidden', false);

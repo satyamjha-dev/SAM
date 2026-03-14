@@ -8,15 +8,12 @@ def startJarvis():
         from main import start
         start()
 
-# To run hotword
 def listenHotword():
-        # Code for process 2
         print("Process 2 is running.")
         from engine.features import hotword
         hotword()
 
 
-    # Start both processes
 if __name__ == '__main__':
         p1 = multiprocessing.Process(target=startJarvis)
         p2 = multiprocessing.Process(target=listenHotword)
